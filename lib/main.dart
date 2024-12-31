@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:meteor_app/UI/Login.dart';
-import 'package:meteor_app/UI/Home.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:meteor_app/utils/provider_setup.dart';
+import 'package:meteor_app/utils/routers.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: providers, 
+  child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,13 +17,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/home',
+    return const MaterialApp(
+      initialRoute: Routers.login,
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/login': (context) => Login(),
-        '/home': (context) => Home(),
-      },
+      onGenerateRoute: Routers.generateRoute,
+      // routes: {
+      //   '/login': (context) => LoginPage(),
+      //   // '/home': (context) => Home(),
+      // },
     );
   }
 }
