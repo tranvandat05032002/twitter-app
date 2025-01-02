@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meteor_app/UI/Login.dart';
-import 'package:meteor_app/UI/Home.dart';
+import 'package:meteor_app/views/Login/LoginPage.dart';
+import 'package:meteor_app/views/Dashboard.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/login': (context) => Login(),
-        '/home': (context) => Home(),
+        '/home': (context) => Dashboard(),
       },
     );
   }
