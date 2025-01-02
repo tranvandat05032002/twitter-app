@@ -53,7 +53,8 @@ class FormElement extends StatelessWidget {
                     final authViewModel =
                         Provider.of<AuthViewModel>(context, listen: false);
 
-                    authViewModel.login(_username.text, _password.text);
+                    authViewModel.login(
+                        context, _username.text, _password.text);
                   },
                   child: Text(
                     "Continue",
