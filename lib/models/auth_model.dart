@@ -1,16 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'auth_model.g.dart';
-
-@JsonSerializable()
 class AuthResponse {
-  @JsonKey(name: "access_token")
   final String accessToken;
-  @JsonKey(name: "refresh_token")
   final String refreshToken;
   AuthResponse({required this.accessToken, required this.refreshToken});
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
-      _$AuthResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
+  factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    return AuthResponse(
+      accessToken: json['access_token'],
+      refreshToken: json['refresh_token'],
+    );
+  }
 }
