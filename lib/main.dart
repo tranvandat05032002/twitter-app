@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:meteor_app/remote/api_service.dart';
+import 'package:meteor_app/viewmodels/auth_viewmodel.dart';
+import 'package:meteor_app/utils/app_shared.dart';
 import 'package:meteor_app/views/Login/LoginPage.dart';
 import 'package:meteor_app/views/Dashboard.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
+import 'package:meteor_app/repository/auth_repository.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final dio = Dio();
+  final apiService = ApiService(dio);
+  final authRepository = AuthRepository(apiService);
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      Provider.value(value: TokenManager()),
+      ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository))
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

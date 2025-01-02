@@ -4,14 +4,9 @@ import 'package:meteor_app/views/Login/component/footer_element.dart';
 import 'package:meteor_app/views/Login/component/form_element.dart';
 import 'package:meteor_app/views/Login/component/header_element.dart';
 
-class Login extends StatefulWidget {
+class Login extends StatelessWidget {
   const Login({super.key});
 
-  @override
-  State<Login> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:meteor_app/viewmodels/auth_viewmodel.dart';
 import 'package:meteor_app/views/Common/checkbox_element.dart';
 import 'package:meteor_app/views/Common/input_element.dart';
+import 'package:provider/provider.dart';
 
 import 'package:meteor_app/views/Login/component/forgot_password_element.dart';
 
-class FormElement extends StatefulWidget {
-  const FormElement({super.key});
+class FormElement extends StatelessWidget {
+  FormElement({super.key});
 
-  @override
-  State<FormElement> createState() => _FormElementState();
-}
-
-class _FormElementState extends State<FormElement> {
   final _formKey = GlobalKey<FormState>();
+
   final _username = TextEditingController();
-  final _passwordController = TextEditingController();
+
+  final _password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<AuthViewModel>(context);
     return Container(
       margin: EdgeInsets.only(bottom: 30),
       child: Form(
@@ -35,7 +35,7 @@ class _FormElementState extends State<FormElement> {
                   hintText: 'Enter your password',
                   validatorMessage: 'Password is not empty',
                   icon: Icons.lock_outlined,
-                  fieldController: _passwordController),
+                  fieldController: _password),
               SizedBox(
                 height: 10,
               ),
@@ -49,7 +49,13 @@ class _FormElementState extends State<FormElement> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => null,
+                  onPressed: () {
+                    final authViewModel =
+                        Provider.of<AuthViewModel>(context, listen: false);
+
+                    authViewModel.login(
+                        context, _username.text, _password.text);
+                  },
                   child: Text(
                     "Continue",
                     style: TextStyle(
