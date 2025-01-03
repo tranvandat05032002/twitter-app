@@ -105,7 +105,7 @@ class _PostItemElementState extends State<PostItemElement> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.network(
-                  tweet.medias![0],
+                  tweet.medias![0].url,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),

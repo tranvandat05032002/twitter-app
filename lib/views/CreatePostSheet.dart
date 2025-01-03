@@ -1,8 +1,13 @@
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meteor_app/models/tweet_model.dart';
+import 'package:meteor_app/utils/app_shared.dart';
 import 'package:meteor_app/viewmodels/tweet_viewmodel.dart';
+import 'dart:html' as html;
 import 'package:meteor_app/views/Common/input_element.dart';
+import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 
 const List<String> listArea = <String>[
@@ -21,8 +26,62 @@ class CreatePostSheet extends StatefulWidget {
 
 class _CreatePostSheetState extends State<CreatePostSheet> {
   String? selectedValue = listArea.first;
+  Uint8List? _selectedImage;
+
   // final _formKey = GlobalKey<FormState>();
   final _content = TextEditingController();
+
+  Future<void> _pickImage() async {
+    // Tạo input HTML để chọn file
+    final html.FileUploadInputElement uploadInput =
+        html.FileUploadInputElement();
+    uploadInput.accept = 'image/*'; // Chỉ cho phép chọn file ảnh
+    uploadInput.click(); // Mở cửa sổ chọn file
+
+    uploadInput.onChange.listen((event) {
+      final files = uploadInput.files;
+      if (files != null && files.isNotEmpty) {
+        final reader = html.FileReader();
+
+        reader.readAsArrayBuffer(files[0]); // Đọc file dưới dạng byte
+        reader.onLoadEnd.listen((event) {
+          setState(() {
+            _selectedImage = reader.result as Uint8List;
+          });
+        });
+      }
+    });
+  }
+
+  Future<void> _uploadImage() async {
+    String? accessToken = await TokenManager.getAccessToken();
+
+    if (accessToken == null) {
+      print('No access token available');
+      return;
+    }
+
+    // Lấy tên file từ file đã chọn
+
+    // Gửi thông tin fileName lên server
+    final uri = Uri.parse(
+        'http://localhost:4000/medias/upload-image'); // Thay URL backend của bạn
+
+    final request = html.HttpRequest();
+    request.open('POST', uri.toString());
+    request.setRequestHeader('Content-Type', 'application/octet-stream');
+
+    request.onLoadEnd.listen((event) {
+      if (request.status == 200) {
+        print('Upload successful');
+      } else {
+        print('Upload failed: ${request.status}');
+      }
+    });
+
+    // Gửi dữ liệu byte
+    request.send(_selectedImage);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +108,16 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                               content: _content.text,
                               hashtags: ["tranvandat", "tranvan", "tweet"],
                               mentions: ["64fc0433824b45ee6166d9fd"],
-                              medias: [], // Empty list if no media
+                              medias: [
+                                Media(
+                                    url:
+                                        "https://twitter-s3-ap-southeast-1.s3.ap-southeast-1.amazonaws.com/images/52db8a9de8a9ba4f79ae6c202.jpg",
+                                    type: 0)
+                              ], // Empty list if no media
                             );
 
                             tweetViewModel.addTweet(
+                              context: context,
                               type: tweet.type,
                               audience: tweet.audience,
                               content: tweet.content,
@@ -157,14 +222,27 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 ],
               ),
               SizedBox(height: 15),
-              TextField(
-                maxLines: 20, // Cho phép nhập 20 dòng
-                minLines: 1,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Bạn đang nghĩ gì?',
-                ),
-                controller: _content,
+              Column(
+                children: [
+                  TextField(
+                    maxLines: 20, // Cho phép nhập 20 dòng
+                    minLines: 1,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Bạn đang nghĩ gì?',
+                    ),
+                    controller: _content,
+                  ),
+                  SizedBox(height: 15),
+                  if (_selectedImage != null)
+                    Image.memory(
+                      _selectedImage!,
+                      height: 350,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  SizedBox(height: 20),
+                ],
               )
             ]),
           ),
@@ -179,7 +257,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                  onPressed: () => null,
+                  onPressed: _pickImage,
                   icon: Icon(
                     Icons.image,
                     color: Colors.green.shade300,

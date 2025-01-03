@@ -26,6 +26,9 @@ class _MyWidgetState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TweetViewModel>(context, listen: false).fetchTweets();
+    });
     // final userInfo = Provider.of<UserInfo>(context);
     return Consumer<UserViewModel>(
       builder: (context, userViewModel, child) {

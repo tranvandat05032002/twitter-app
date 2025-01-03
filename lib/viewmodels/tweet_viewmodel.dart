@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meteor_app/API/ApiClient.dart';
 import 'package:meteor_app/models/tweet_model.dart';
 import 'package:meteor_app/utils/app_shared.dart';
+import 'package:meteor_app/views/Dashboard.dart';
 
 class TweetViewModel extends ChangeNotifier {
   List<TweetElement> _tweets = [];
@@ -37,15 +38,14 @@ class TweetViewModel extends ChangeNotifier {
   }
 
   Future<void> addTweet({
+    required BuildContext context,
     required String content,
     required int type,
     required int audience,
     List<String>? hashtags,
     List<String>? mentions,
-    List<String>? medias,
+    List<Media>? medias,
   }) async {
-    print("Adding tweet...");
-
     final String? accessToken = await TokenManager.getAccessToken();
     if (_isLoading) return;
     if (accessToken == null) return;
@@ -65,6 +65,8 @@ class TweetViewModel extends ChangeNotifier {
 
       // Assuming the result contains the newly added tweet
       if (checkAddTweet) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Dashboard()));
         // _tweets.insert(0, result); // Add the new tweet to the top of the list
         notifyListeners(); // Notify UI to refresh
       }

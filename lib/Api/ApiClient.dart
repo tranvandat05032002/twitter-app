@@ -105,7 +105,7 @@ class ApiClient {
     String? parentId,
     required List<String> hashtags,
     required List<String> mentions,
-    required List<String> medias,
+    required List<Media> medias,
     required String accessToken,
   }) async {
     bool checkPostTweet = false;

@@ -61,7 +61,7 @@ class TweetElement {
   dynamic parentId;
   List<Hashtag>? hashtags;
   List<dynamic>? mentions;
-  List<dynamic>? medias;
+  List<Media>? medias;
   int? guestViews;
   int? userViews;
   DateTime? createdAt;
@@ -110,7 +110,8 @@ class TweetElement {
           .map((hashtag) => Hashtag.fromJson(hashtag))
           .toList(),
       mentions: json['mentions'] as List<dynamic>,
-      medias: json['medias'] as List<dynamic>,
+      medias:
+          (json['medias'] as List).map((item) => Media.fromJson(item)).toList(),
       guestViews: json['guest_views'] as int,
       userViews: json['user_views'] as int,
       createdAt: DateTime.parse(json['created_at']),
@@ -196,6 +197,40 @@ class User {
 }
 
 // Input
+class Media {
+  String url;
+  int type;
+
+  Media({
+    required this.url,
+    required this.type,
+  });
+
+  // Chuyển đổi đối tượng Media thành định dạng JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'type': type,
+    };
+  }
+
+  // Tạo đối tượng Media từ JSON (convert từ JSON string về đối tượng Media)
+  factory Media.fromJson(dynamic json) {
+    if (json is String) {
+      // Trường hợp json chỉ là một chuỗi URL
+      return Media(url: json, type: 0);
+    } else if (json is Map<String, dynamic>) {
+      // Trường hợp json là một đối tượng
+      return Media(
+        url: json['url'],
+        type: json['type'],
+      );
+    } else {
+      throw Exception("Invalid Media format");
+    }
+  }
+}
+
 class TweetInput {
   int type;
   int audience;
@@ -203,7 +238,7 @@ class TweetInput {
   String? parentId;
   List<String> hashtags;
   List<String> mentions;
-  List<String> medias;
+  List<Media> medias;
 
   TweetInput({
     required this.type,
@@ -224,7 +259,7 @@ class TweetInput {
       'parent_id': parentId,
       'hashtags': hashtags,
       'mentions': mentions,
-      'medias': medias,
+      'medias': medias.map((media) => media.toJson()).toList(),
     };
   }
 }
