@@ -17,6 +17,6 @@ class LoginViewmodel extends BaseViewModel {
   }
 
   void onPressedNavigateHomePage(){
-    Navigator.pushNamed(context, Routers.home);
+    Navigator.pushNamed(context, Routers.profile);
   }
 }
