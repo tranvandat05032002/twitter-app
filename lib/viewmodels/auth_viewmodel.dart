@@ -24,7 +24,6 @@ class AuthViewModel extends ChangeNotifier {
       final String? refreshToken = _authResponse?.result.refreshToken;
       if (accessToken != null && refreshToken != null) {
         await TokenManager.saveTokens(accessToken, refreshToken);
-        final String? token = await TokenManager.getAccessToken();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Dashboard()));
       }
